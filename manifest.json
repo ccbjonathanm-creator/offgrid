@@ -1,0 +1,18 @@
+{
+  "name": "Off-Grid Autonomie",
+  "short_name": "Off-Grid",
+  "description": "Évalue ton autonomie (énergie, eau, alimentation, déchets), suis un parcours off-grid et dimensionne ton solaire, ton eau de pluie et ton potager.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1a14",
+  "theme_color": "#1f3d2b",
+  "categories": ["lifestyle", "utilities", "education"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
