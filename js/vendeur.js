@@ -39,11 +39,12 @@ const Vendeur = (() => {
     return new TextDecoder().decode(pt); // throw si mauvaise passphrase
   }
 
-  async function signDevice(jwkStr, device){
+  // signe l'e-mail normalisé (doit correspondre EXACTEMENT à licence.js : trim + minuscules)
+  async function signEmail(jwkStr, email){
     const jwk = JSON.parse(jwkStr);
     const key = await crypto.subtle.importKey('jwk', jwk, {name:'ECDSA',namedCurve:'P-256'}, false, ['sign']);
-    const dev = device.replace(/\s+/g,'').toUpperCase();
-    const sig = await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'}, key, new TextEncoder().encode(dev));
+    const em = (email||'').trim().toLowerCase();
+    const sig = await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'}, key, new TextEncoder().encode(em));
     return b64url(new Uint8Array(sig));
   }
 
@@ -105,22 +106,22 @@ const Vendeur = (() => {
   function viewGenerate(body, close){
     body.innerHTML = `
       <h3>🔑 Générer une licence</h3>
-      <p class="hint">Colle l'identifiant d'appareil du client (il le trouve dans Réglages → Licence).</p>
-      <label class="field"><span class="lab">Identifiant d'appareil du client</span>
-        <input type="text" id="v-dev" placeholder="ex. A1B2 C3D4 E5F6" autocomplete="off"></label>
+      <p class="hint">Entre l'e-mail que le client t'a communiqué à l'achat. La clé sera liée à cet e-mail (valable sur tous ses appareils).</p>
+      <label class="field"><span class="lab">E-mail du client</span>
+        <input type="email" id="v-email" placeholder="ex. client@mail.com" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
       <div class="btn-row"><button class="btn" id="v-gen">Générer la clé</button></div>
       <div id="v-out" class="result" style="display:none"></div>
       <div class="spacer"></div>
       <button class="btn ghost" id="v-done">Fermer</button>`;
     body.querySelector('#v-done').addEventListener('click', close);
     body.querySelector('#v-gen').addEventListener('click', async ()=>{
-      const dev = body.querySelector('#v-dev').value.trim();
+      const email = body.querySelector('#v-email').value.trim();
       const out = body.querySelector('#v-out');
-      if (!dev){ out.style.display='block'; out.textContent='Entre un identifiant d\'appareil.'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ out.style.display='block'; out.textContent='Entre un e-mail valide.'; return; }
       try{
-        const licence = await signDevice(privInMemory, dev);
+        const licence = await signEmail(privInMemory, email);
         out.style.display='block';
-        out.innerHTML = `<div class="hint" style="margin-bottom:6px">Clé de licence (copiée) — envoie-la au client :</div>
+        out.innerHTML = `<div class="hint" style="margin-bottom:6px">Clé pour <b>${email.toLowerCase()}</b> (copiée) — envoie e-mail + clé au client :</div>
           <div style="word-break:break-all;font-family:ui-monospace,monospace;font-size:13px;color:var(--green-2)">${licence}</div>`;
         if (navigator.clipboard) navigator.clipboard.writeText(licence);
         App.toast('Clé générée et copiée');
