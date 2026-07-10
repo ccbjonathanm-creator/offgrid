@@ -1,5 +1,5 @@
 /* Off-Grid Autonomie — service worker (hors-ligne + MAJ auto) */
-const CACHE = 'offgrid-v2';
+const CACHE = 'offgrid-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const ASSETS = [
   './js/progression.js',
   './js/plan.js',
   './js/licence.js',
+  './js/vendeur.js',
   './js/app.js',
   './data/modules.js',
   './data/badges.js',

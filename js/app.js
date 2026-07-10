@@ -158,7 +158,7 @@ const App = {
       <div class="btn-row"><button class="btn danger" id="s-reset">Tout effacer</button></div>
       <div class="spacer"></div>
       <button class="btn ghost" id="s-close">Fermer</button>
-      <p class="hint" style="text-align:center;margin-top:12px">Off-Grid Autonomie · v1</p>
+      <p class="hint" id="s-version" style="text-align:center;margin-top:12px;user-select:none">Off-Grid Autonomie · v1</p>
     </div>`;
     document.body.appendChild(back);
     const close = ()=>back.remove();
@@ -185,6 +185,7 @@ const App = {
       r.readAsText(file);
     });
     back.querySelector('#s-licence').addEventListener('click', ()=>{ close(); Licence.paywall('Version complète'); });
+    Vendeur.bindLongPress(back.querySelector('#s-version')); // appui long = mode vendeur (générateur de clés)
     back.querySelector('#s-reset').addEventListener('click', ()=>{
       if (confirm('Effacer toutes tes données off-grid ?')){
         Store.reset(); Questionnaire.step=0; Store._retake=true;

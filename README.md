@@ -138,10 +138,12 @@ L'app est **gratuite à l'usage** (bilan, parcours, calculateurs de base, badges
 - La clé de licence est une **signature cryptographique (ECDSA P-256)** de cet identifiant. Seul le vendeur, avec la **clé privée**, peut en générer une valide. L'app ne contient que la **clé publique** (elle vérifie, elle ne peut pas signer).
 - Résultat : impossible de fabriquer une clé valide sans la clé privée.
 
-**Générateur de clés** (dossier `offgrid_gen/`, à garder PRIVÉ, jamais déployé) :
-1. Le client t'envoie son identifiant d'appareil.
-2. Tu ouvres `offgrid_gen/index.html`, colles l'identifiant, cliques « Générer ».
-3. Tu lui renvoies la clé, il la colle dans l'app → premium débloqué à vie sur son appareil.
+**Générateur de clés intégré (mode vendeur)** — la clé privée n'est jamais dans le code :
+1. Dans l'app, **Réglages → appui long (~1 s) sur le numéro de version** : le mode vendeur s'ouvre.
+2. **Première fois** : tu colles ta clé privée (JWK) et choisis une passphrase. Elle est **chiffrée (AES-GCM) et gardée sur ton seul appareil**, jamais en clair, jamais déployée. Les fois suivantes, tu la déverrouilles avec ta passphrase.
+3. Le client t'envoie son identifiant d'appareil (Réglages → Licence) → tu le colles → « Générer » → tu lui renvoies la clé → il la colle → premium à vie sur son appareil.
+
+Tu peux ainsi émettre des clés depuis ton téléphone, de partout, sans aucun fichier sensible qui traîne.
 
 **Limite honnête** : comme toute PWA 100 % locale, le verrou est contournable par une réinstallation (comme pour Coffre). C'est acceptable pour un produit peu cher vendu à des gens honnêtes. Le seul verrou vraiment béton passerait par une publication sur le Play Store (Google gère paiement, essai et anti-copie).
 
