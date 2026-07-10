@@ -25,6 +25,16 @@ const Dashboard = (() => {
     const course = Store.courseProgress();
     const target = Store.data.target || s.target;
 
+    // bandeau : des actions ont été terminées depuis le dernier bilan
+    const newDone = Store.completedCount() - (Store.data._bilanCompleted || 0);
+    const nudge = newDone > 0 ? `<div class="card" id="dash-nudge" style="border-color:rgba(244,185,66,.5);background:rgba(244,185,66,.08);cursor:pointer">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:24px">🔄</span>
+          <div style="flex:1"><b>${newDone} action(s) terminée(s) sur le terrain</b>
+            <div class="hint">Refais ton bilan pour mettre à jour ton score.</div></div>
+          <span class="a-go">›</span>
+        </div></div>` : '';
+
     View.set(`
       <div class="hero">
         <div class="gauge-wrap">${Charts.gauge(s.global)}</div>
@@ -33,6 +43,7 @@ const Dashboard = (() => {
           <span class="target-pill">🎯 Cible : ${LL[target]}</span>
         </div>
       </div>
+      ${nudge}
 
       <div class="card">
         <div class="section-title" style="margin-top:0">Profil d'autonomie</div>
@@ -49,6 +60,9 @@ const Dashboard = (() => {
       <div class="section-title">Tes prochaines actions</div>
       ${renderNext()}
     `);
+
+    const nudgeEl = View.el.querySelector('#dash-nudge');
+    if (nudgeEl) nudgeEl.addEventListener('click', ()=>{ Store._retake = true; Questionnaire.step = 0; App.go('questionnaire'); });
   }
 
   // prochaines actions : modules non terminés du niveau cible et en dessous,

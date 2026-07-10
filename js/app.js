@@ -29,10 +29,14 @@ const Store = {
   save(){ try{ localStorage.setItem(this.KEY, JSON.stringify(this.data)); }catch(e){} },
   reset(){ this.data = this.fresh(); this.save(); },
 
+  // nombre de modules terminés (100 %)
+  completedCount(){ return MODULES.filter(m => this.moduleDone(m.id)).length; },
+
   // enregistre les scores + historise (1 point par jour, on écrase celui du jour)
   setScores(s){
     this.data.scores = s;
     if (!this.data.target) this.data.target = s.target;
+    this.data._bilanCompleted = this.completedCount(); // repère l'avancement au moment du bilan
     const today = new Date().toISOString().slice(0,10);
     const h = this.data.history;
     const entry = { date: today, global:s.global, energie:s.energie, eau:s.eau, alimentation:s.alimentation, dechets:s.dechets };
@@ -79,8 +83,9 @@ const Store = {
 const App = {
   current: 'dashboard',
 
-  boot(){
+  async boot(){
     Store.load();
+    await Licence.init();
     // routeur par onglets
     document.querySelectorAll('.tab').forEach(t=>{
       t.addEventListener('click', ()=>this.go(t.dataset.view));
@@ -146,6 +151,10 @@ const App = {
       <div class="btn-row"><button class="btn ghost" id="s-export">Exporter mes données</button></div>
       <div class="btn-row"><button class="btn ghost" id="s-import">Importer une sauvegarde</button></div>
       <input type="file" id="s-file" accept="application/json" hidden>
+      <div class="section-title" style="margin:14px 0 6px">Licence</div>
+      <div class="result" style="margin-top:0">${App.licenceStatusText()}</div>
+      <div class="btn-row"><button class="btn ghost" id="s-licence">${Licence.isLicensed()?'Voir ma licence':'Activer / gérer ma licence'}</button></div>
+      <div class="section-title" style="margin:14px 0 6px">Données</div>
       <div class="btn-row"><button class="btn danger" id="s-reset">Tout effacer</button></div>
       <div class="spacer"></div>
       <button class="btn ghost" id="s-close">Fermer</button>
@@ -175,12 +184,19 @@ const App = {
       }catch(err){ this.toast('Fichier invalide'); } };
       r.readAsText(file);
     });
+    back.querySelector('#s-licence').addEventListener('click', ()=>{ close(); Licence.paywall('Version complète'); });
     back.querySelector('#s-reset').addEventListener('click', ()=>{
       if (confirm('Effacer toutes tes données off-grid ?')){
         Store.reset(); Questionnaire.step=0; Store._retake=true;
         close(); this.go('questionnaire'); this.toast('Données effacées');
       }
     });
+  },
+
+  licenceStatusText(){
+    if (Licence.isLicensed()) return '✓ <b>Version complète activée</b> · merci pour ton achat !';
+    if (Licence.trialActive()) return `⏳ <b>Essai gratuit</b> : ${Licence.trialDaysLeft()} jour(s) restant(s). Toutes les fonctions premium sont débloquées.`;
+    return '🔒 <b>Essai terminé</b>. Active une licence pour débloquer le ROI et le plan PDF.';
   },
 
   registerSW(){

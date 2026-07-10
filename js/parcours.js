@@ -103,6 +103,7 @@ const Parcours = (() => {
     // cocher une action
     View.el.querySelectorAll('.check').forEach(c=>c.addEventListener('click',()=>{
       const id=c.dataset.id, i=+c.dataset.i;
+      const wasPct = Store.modulePct(id);
       Store.toggleCheck(id, i);
       // maj visuelle locale sans tout re-render
       c.classList.toggle('on');
@@ -112,6 +113,7 @@ const Parcours = (() => {
       mod.querySelector('.m-pct').textContent = pct+'%';
       mod.querySelector('.mod-mini-bar > i').style.width = pct+'%';
       App.refreshBadges();
+      if (pct === 100 && wasPct < 100) celebrate(MODULES.find(m=>m.id===id));
     }));
     // notes
     View.el.querySelectorAll('[data-note]').forEach(t=>t.addEventListener('input',()=>{
@@ -121,6 +123,32 @@ const Parcours = (() => {
     View.el.querySelectorAll('[data-calc]').forEach(b=>b.addEventListener('click',()=>{
       Calculateurs.open(b.dataset.calc);
     }));
+  }
+
+  // félicitations à la complétion d'un module + proposition de MAJ du bilan
+  function celebrate(m){
+    if (!m) return;
+    const cat = Questionnaire.CATS.find(c=>c.id===m.cat);
+    const idx = Questionnaire.CATS.findIndex(c=>c.id===m.cat);
+    const back = document.createElement('div');
+    back.className = 'sheet-back';
+    back.innerHTML = `<div class="sheet" style="text-align:center">
+      <div style="font-size:44px">🎉</div>
+      <h3>Module terminé !</h3>
+      <p class="hint">${m.icon} <b>${m.title}</b></p>
+      <p class="hint" style="margin-top:8px">Cette action renforce ta catégorie ${cat?cat.icon+' '+cat.label:''}. Mets à jour ton bilan pour voir ton score grimper.</p>
+      <div class="btn-row">
+        <button class="btn ghost" id="cel-later">Plus tard</button>
+        <button class="btn" id="cel-update">Mettre à jour →</button>
+      </div></div>`;
+    document.body.appendChild(back);
+    App.refreshBadges();
+    const close = ()=>back.remove();
+    back.addEventListener('click', e=>{ if (e.target===back) close(); });
+    back.querySelector('#cel-later').addEventListener('click', close);
+    back.querySelector('#cel-update').addEventListener('click', ()=>{
+      close(); Store._retake = true; Questionnaire.step = Math.max(0, idx); App.go('questionnaire');
+    });
   }
 
   // appelé depuis le dashboard (prochaines actions)

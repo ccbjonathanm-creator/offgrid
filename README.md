@@ -27,10 +27,15 @@ Aucun compte, aucun serveur, aucune donnée qui part ailleurs : **tout reste sur
 - **Calculateurs** :
   - Besoins électriques (appareils → Wh/jour et kWh/mois + conseils),
   - Dimensionnement panneaux + batteries (Wc, Ah, nb de panneaux/batteries, jours d'autonomie, tension),
+  - **Rentabilité (ROI)** — premium — (coût, économies annuelles, temps de retour, gain sur 20 ans),
   - Eau de pluie (surface toit × pluviométrie × coefficient → litres/an + cuves),
   - Surface potager (personnes × objectif × intensité → m² + cultures de base).
+- **Localisation réelle (Open-Meteo)** : ensoleillement et pluviométrie réels à ton adresse (GPS ou recherche de commune), pour un dimensionnement précis au lieu de moyennes régionales.
+- **Boucle action → score** : terminer un module propose de mettre à jour ton bilan, et le tableau de bord te le rappelle. Ton score progresse avec tes actions réelles.
+- **Mon plan d'autonomie (PDF)** — premium — : rapport personnalisé (score, priorités, dimensionnements, objectifs) à imprimer ou enregistrer en PDF.
 - **Progression / gamification** : courbe d'évolution du score (global + par catégorie), 12 badges, objectifs personnels avec suggestions.
-- **Réglages** : export / import de tes données en fichier JSON, remise à zéro.
+- **Version d'essai + licence** : 15 jours d'essai avec toutes les fonctions premium, puis clé de licence signée (par appareil) pour débloquer à vie.
+- **Réglages** : statut de licence, export / import de tes données en fichier JSON, remise à zéro.
 - **PWA** : installable sur l'écran d'accueil, fonctionne 100 % hors-ligne, mises à jour automatiques.
 
 ---
@@ -121,6 +126,24 @@ Rattachable à la marque **generationapp.fr** (sous-dossier ou sous-domaine).
 - **Données réelles** : brancher une API météo/ensoleillement (ex. Open-Meteo, déjà utilisée dans Valise) pour un dimensionnement solaire et pluie basé sur la localisation exacte.
 - **Rappels** : notifications locales pour les objectifs trimestriels et les tâches saisonnières du potager.
 - **Mode IA** (BYOK, comme Prisme) : un assistant qui répond aux questions off-grid à partir d'une clé gratuite de l'utilisateur.
+
+---
+
+## Monétisation : essai + licence
+
+L'app est **gratuite à l'usage** (bilan, parcours, calculateurs de base, badges) avec un **essai premium de 15 jours**. Les fonctions premium (calculateur de rentabilité, plan PDF) se débloquent ensuite avec une **clé de licence par appareil**.
+
+**Comment ça marche, côté sécurité :**
+- Chaque appareil a un identifiant unique (visible dans Réglages → Licence).
+- La clé de licence est une **signature cryptographique (ECDSA P-256)** de cet identifiant. Seul le vendeur, avec la **clé privée**, peut en générer une valide. L'app ne contient que la **clé publique** (elle vérifie, elle ne peut pas signer).
+- Résultat : impossible de fabriquer une clé valide sans la clé privée.
+
+**Générateur de clés** (dossier `offgrid_gen/`, à garder PRIVÉ, jamais déployé) :
+1. Le client t'envoie son identifiant d'appareil.
+2. Tu ouvres `offgrid_gen/index.html`, colles l'identifiant, cliques « Générer ».
+3. Tu lui renvoies la clé, il la colle dans l'app → premium débloqué à vie sur son appareil.
+
+**Limite honnête** : comme toute PWA 100 % locale, le verrou est contournable par une réinstallation (comme pour Coffre). C'est acceptable pour un produit peu cher vendu à des gens honnêtes. Le seul verrou vraiment béton passerait par une publication sur le Play Store (Google gère paiement, essai et anti-copie).
 
 ---
 

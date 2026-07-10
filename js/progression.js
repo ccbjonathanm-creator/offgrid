@@ -24,10 +24,22 @@ const Progression = (() => {
     const s = Store.data.scores;
     View.set(`
       ${s ? renderHistory() : ''}
+      ${s ? renderPlan() : ''}
       ${renderBadges()}
       ${renderObjectives()}
     `);
     bind();
+  }
+
+  function renderPlan(){
+    return `<div class="card" style="border-color:rgba(244,185,66,.4);background:rgba(244,185,66,.06)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:26px">📄</span>
+        <div style="flex:1"><b>Mon plan d'autonomie <span class="prem-pill">★ Premium</span></b>
+          <div class="hint">Un rapport personnalisé (score, priorités, dimensionnements) à enregistrer en PDF.</div></div>
+      </div>
+      <div class="btn-row"><button class="btn small" id="open-plan" style="width:100%">📄 Générer mon plan (PDF)</button></div>
+    </div>`;
   }
 
   /* ---- Historique ---- */
@@ -83,6 +95,9 @@ const Progression = (() => {
   }
 
   function bind(){
+    const plan = View.el.querySelector('#open-plan');
+    if (plan) plan.addEventListener('click', ()=>Plan.open());
+
     View.el.querySelectorAll('[data-serie]').forEach(c=>c.addEventListener('click',()=>{ curSerie=c.dataset.serie; render(); }));
 
     View.el.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{

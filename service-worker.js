@@ -1,15 +1,18 @@
 /* Off-Grid Autonomie — service worker (hors-ligne + MAJ auto) */
-const CACHE = 'offgrid-v1';
+const CACHE = 'offgrid-v2';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
+  './js/geo.js',
   './js/charts.js',
   './js/questionnaire.js',
   './js/dashboard.js',
   './js/parcours.js',
   './js/calculateurs.js',
   './js/progression.js',
+  './js/plan.js',
+  './js/licence.js',
   './js/app.js',
   './data/modules.js',
   './data/badges.js',
@@ -35,7 +38,7 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   e.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'reload' })
       .then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
