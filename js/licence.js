@@ -155,9 +155,9 @@ const Licence = (() => {
     back.innerHTML = `<div class="sheet">
       <h3>★ Fonction Premium</h3>
       <p class="hint">« ${feature} » fait partie de la version complète d'Off-Grid Autonomie.</p>
-      ${trial ? `<div class="result" style="margin-top:8px"><b>Essai en cours</b> : il te reste <b>${trialDaysLeft()} jour(s)</b> pour tout tester gratuitement.</div>`
-              : `<div class="result" style="margin-top:8px;background:rgba(226,104,60,.1);border-color:rgba(226,104,60,.4)"><b>Ton essai est terminé.</b> Active ta licence pour débloquer les fonctions premium à vie.</div>`}
-      <div class="section-title" style="margin:16px 0 6px">Activer une licence</div>
+      ${trial ? `<div class="result" style="margin-top:8px"><b>Essai en cours</b> : il te reste <b>${trialDaysLeft()} jour(s)</b> pour tout tester gratuitement. Déblocage à vie <b>15 €</b>.</div>`
+              : `<div class="result" style="margin-top:8px;background:rgba(226,104,60,.1);border-color:rgba(226,104,60,.4)"><b>Ton essai est terminé.</b> Débloque les fonctions premium à vie pour <b>15 €</b> (paiement unique).</div>`}
+      <div class="section-title" style="margin:16px 0 6px">Activer une licence — 15 €</div>
       <p class="hint">Saisis l'<b>e-mail utilisé lors de l'achat</b> et la clé qu'on t'a envoyée. Elle marche sur tous tes appareils, même après une réinstallation.</p>
       <input type="email" id="pw-email" placeholder="Ton e-mail d'achat" autocomplete="email" autocapitalize="off" spellcheck="false" style="margin-top:4px">
       <input type="text" id="pw-key" placeholder="Colle ta clé de licence ici" autocomplete="off" style="margin-top:10px">
