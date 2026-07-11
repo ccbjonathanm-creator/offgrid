@@ -91,10 +91,12 @@ const App = {
       t.addEventListener('click', ()=>this.go(t.dataset.view));
     });
     document.getElementById('btn-reset').addEventListener('click', ()=>this.settings());
-    // première visite -> questionnaire, sinon dashboard
-    this.go(Store.data.scores ? 'dashboard' : 'questionnaire');
-    this.refreshBadges(true);
     this.registerSW();
+    // Gate e-mail au démarrage : si ni licence ni e-mail d'essai, on le demande
+    // AVANT d'entrer dans l'app (empêche de relancer un essai en réinstallant).
+    const enter = ()=>{ this.go(Store.data.scores ? 'dashboard' : 'questionnaire'); this.refreshBadges(true); };
+    if (Licence.needsEmail()) Licence.showEmailGate(enter);
+    else enter();
   },
 
   go(view){
